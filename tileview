@@ -1,0 +1,27 @@
+#!/bin/bash
+
+dHL=$(xdpyinfo | grep dimensions | awk '{print $2}' | sed -e "s/x/ /" | awk '{print $1}')
+dVL=$(xdpyinfo | grep dimensions | awk '{print $2}' | sed -e "s/x/ /" | awk '{print $2}')
+#mHL=$((dHL/3))
+mVL=$((dVL/11*5))
+mHL=$((mVL/6*5))
+
+i=0
+for img in "$@"; do
+   x=$((i%4*mHL))
+   [[ i -le 3 ]] && y=0
+   [[ i -gt 3 ]] && y=$((mVL*7/6))
+   mrview $img \
+   -focus false \
+   -noannotations \
+   -sync.focus \
+   -plane 2 \
+   -position $x,$y \
+   -size $mHL,$mVL \
+   -fov 200 \
+   -capture.folder ~/share/NR/pngs &
+   
+   sleep 0.5
+   i=$((i+1))
+   [[ i -ge $# ]] && exit 0
+done
